@@ -1,0 +1,168 @@
+Sub stocks()
+
+    For Each ws In Worksheets
+        
+        ws.Range("J1").Value = "Ticker Symbol"
+        ws.Range("K1").Value = "Price Change"
+        ws.Range("L1").Value = "Percent Change"
+        ws.Range("M1").Value = "Total Volume"
+        'ws.Range("N1").Value = "Beg Price"
+        'ws.Range("O1").Value = "End Price"
+        
+                     
+          ' Set Variables
+          Dim ticker As String
+          Dim endprice As Double
+          Dim begprice As Double
+          Dim pricechange As Double
+          Dim perchange As Double
+          
+        
+          ' Set an initial variable for holding the total volume per ticker
+          Dim sumvolume As Double
+          
+          sumvolume = 0
+    
+          ' Keep track of the location for each ticker in the summary table
+          Dim Summary_Table_Row As Double
+          Summary_Table_Row = 2
+        
+          'Find last row
+          Dim LastRow As Double
+          LastRow = ws.Cells(Rows.Count, 1).End(xlUp).Row
+        
+          ' Loop through all tickers
+          For i = 2 To LastRow
+        
+            ' find last date of ticker...
+            If ws.Cells(i + 1, 1).Value <> ws.Cells(i, 1).Value Then
+        
+              ' Set the ticker
+              ticker = ws.Cells(i, 1).Value
+              
+              ' Set the endprice
+              
+              endprice = ws.Cells(i, 6).Value
+              
+              'set the pricechange
+              pricechange = endprice - begprice
+              
+              'set the percent change
+              
+              perchange = pricechange / begprice
+                  
+              ' Add to the Volume
+              sumvolume = sumvolume + ws.Cells(i, 7).Value
+        
+              ' Print the ticker in the Summary Table
+              ws.Range("J" & Summary_Table_Row).Value = ticker
+        
+              ' Print the pricechange to the Summary Table
+              ws.Range("K" & Summary_Table_Row).Value = pricechange
+              ws.Range("K" & Summary_Table_Row).Style = "currency"
+              
+              ' Print the percent to the Summary Table
+              ws.Range("L" & Summary_Table_Row).Value = perchange
+              ws.Range("L" & Summary_Table_Row).Style = "percent"
+              
+              ' Print the Volume to the Summary Table
+              ws.Range("M" & Summary_Table_Row).Value = sumvolume
+              ws.Range("M" & Summary_Table_Row).Style = "comma"
+              
+              ' Print the begprice to the Summary Table
+              'ws.Range("N" & Summary_Table_Row).Value = begprice
+              
+              ' Print the endprice to the Summary Table
+              'ws.Range("O" & Summary_Table_Row).Value = endprice
+              
+              ' Add one to the summary table row
+              Summary_Table_Row = Summary_Table_Row + 1
+              
+              
+            'find first date of ticker
+            
+            ElseIf ws.Cells(i - 1, 1).Value <> ws.Cells(i, 1).Value Then
+            
+              sumvolume = sumvolume + ws.Cells(i, 7).Value
+                        
+              begprice = ws.Cells(i, 6).Value
+            
+            'Find dates between beginning and end
+                    
+            Else
+        
+              ' Add to the Volume
+              sumvolume = sumvolume + ws.Cells(i, 7).Value
+        
+            End If
+        
+      Next i
+    
+    Next ws
+
+End Sub
+
+
+Sub greatestloop()
+
+    For Each ws In Worksheets
+
+        Dim greatpercent As Double
+        Dim leastpercent As Double
+        Dim greatvolume As Double
+        Dim greatpercenttick As String
+        Dim leastpercenttick As String
+        Dim greatvolumetick As String
+        
+        Dim Last As Double
+        Dim j As Integer
+    
+    
+      
+        Last = ws.Cells(Rows.Count, 10).End(xlUp).Row
+        greatpercent = 0
+        leastpercent = 0
+        greatvolume = 0
+    
+        For j = 2 To Last
+        
+            If ws.Cells(j, 12).Value > greatpercent Then
+                greatpercent = ws.Cells(j, 12).Value
+                greatpercenttick = ws.Cells(j, 10).Value
+            End If
+            
+            If ws.Cells(j, 12).Value < leastpercent Then
+                leastpercent = ws.Cells(j, 12).Value
+                leastpercenttick = ws.Cells(j, 10).Value
+            End If
+            
+            If ws.Cells(j, 13).Value > greatvolume Then
+                greatvolume = ws.Cells(j, 13).Value
+                greatvolumetick = ws.Cells(j, 10).Value
+            End If
+                
+        Next j
+
+        ws.Range("P1").Value = ws.Name
+        ws.Range("Q1").Value = "Ticker"
+        ws.Range("R1").Value = "Value"
+        ws.Range("P2").Value = "Greatest Percent Increase"
+        ws.Range("P3").Value = "Greatest Percent Decrease"
+        ws.Range("P4").Value = "Greatest Volume"
+
+        ws.Range("Q2").Value = greatpercenttick
+        ws.Range("Q3").Value = leastpercenttick
+        ws.Range("Q4").Value = greatvolumetick
+        ws.Range("R2").Value = greatpercent
+        ws.Range("R3").Value = leastpercent
+        ws.Range("R4").Value = greatvolume
+        
+        ws.Range("R2").Style = "Percent"
+        ws.Range("R3").Style = "Percent"
+        ws.Range("R4").Style = "comma"
+    
+    
+    Next ws
+
+End Sub
+
